@@ -1,13 +1,14 @@
 CPPFLAG = $(shell python3 -c 'import tensorflow as tf; print(tf.sysconfig.get_include())')
 LDFLAGS = $(shell python3 -c 'import tensorflow as tf; print(tf.sysconfig.get_lib())')
-CUDALIB = /usr/local/cuda-9.0/lib64/
+TF_ABI=$(shell python -c 'import tensorflow as tf; print(tf.__cxx11_abi_flag__ if "__cxx11_abi_flag__" in tf.__dict__ else 0)')
+CUDALIB = /opt/cuda/lib64/
 
 # Build
 
 CPAB_ops.so: CPAB_ops.cc CPAB_ops.cu.o
 	g++ -std=c++11 CPAB_ops.cc CPAB_ops.cu.o -shared -o CPAB_ops.so  \
 	-I $(CPPFLAG) -fPIC -O2 -lcudart -L $(CUDALIB) -L $(LDFLAGS) \
-	-ltensorflow_framework -D_GLIBCXX_USE_CXX11_ABI=0 
+	-ltensorflow_framework -D_GLIBCXX_USE_CXX11_ABI=$(TF_ABI) 
 
 CPAB_ops.cu.o: CPAB_ops.cu.cc
 	nvcc CPAB_ops.cu.cc -std=c++11 -c -o CPAB_ops.cu.o -I $(CPPFLAG) \
