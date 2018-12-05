@@ -199,7 +199,7 @@ def ST_TPS_transformer(U, theta, out_size, tps_size = [4,4]):
         grid = tf_meshgrid(out_height, out_width)
         
         # Call transformer
-        T_g = tf_TPS_transformer(grid, theta)
+        T_g = tf_TPS_transformer(grid, theta, tps_size)
         
         # Slice and reshape
         x_s = tf.slice(T_g, [0, 0, 0], [-1, 1, -1])
